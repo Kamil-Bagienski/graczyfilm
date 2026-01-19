@@ -19,10 +19,9 @@ if appid:
         st.subheader(data.get("name", "Brak nazwy"))
         
         # Krótki opis
-        st.markdown(f"**Opis:**  \n{data.get('short_description', 'Brak opisu')}")
-        
-        st.write(f"Developer: {', '.join(data.get('developers', ['-']))}")
-        st.write(f"Data premiery: {data.get('release_date', {}).get('date', '-')}")
+        full_desc = data.get("detailed_description", "Brak szczegółowego opisu")
+        st.markdown("**Pełny opis:**")
+        st.markdown(full_desc, unsafe_allow_html=True)
         
         # Ocena ogólna
         url_reviews = f"https://store.steampowered.com/appreviews/{appid}?json=1&filter=summary"
