@@ -30,16 +30,22 @@ if appid:
             st.write(f"Negatywne: {qs.get('total_negative', 0):,}")
         
         # Tagi
-        tags = data.get("tags", {})
-        if tags:
-            tag_df = pd.DataFrame([
-                {"Tag": k, "Głosy": v["count"]} 
-                for k, v in tags.items()
-            ]).sort_values("Głosy", ascending=False)
-            st.subheader("Najpopularniejsze tagi")
-            st.dataframe(tag_df.head(12))
+        url_tags = f"https://steamspy.com/api.php?request=appdetails&appid={appid}"
+        response = requests.get(url_tags)
+        if response.status_code == 200:
+            data = response.json()
+            tags = data.get("tags", {})
+            if tags:
+                tag_df = pd.DataFrame([
+                    {"Tag": tag, "Głosy": count} 
+                    for tag, count in tags.items()
+                ]).sort_values("Głosy", ascending=False)
+                st.subheader("Najpopularniejsze tagi (SteamSpy)")
+                st.dataframe(tag_df.head(12))
+            else:
+                st.write("Brak tagów w SteamSpy")
         else:
-            st.write("Tagi niedostępne")
+            st.write("SteamSpy niedostępny")
         
         # Gracze online teraz
         url_players = f"https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={appid}&key={API_KEY}"
